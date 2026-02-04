@@ -1,0 +1,111 @@
+/**
+ * Projects Data
+ * All project information for the portfolio
+ */
+
+import type { Project } from '../types';
+
+export const projects: Project[] = [
+  {
+    title: 'AI Career Recommendation Chatbot',
+    description: 'An intelligent chatbot that analyzes resumes and provides personalized career recommendations using AI and machine learning.',
+    image: '/api/placeholder/600/400',
+    technologies: ['React', 'Python', 'FastAPI', 'OpenAI', 'ChromaDB', 'Streamlit'],
+    features: [
+      'PDF resume analysis',
+      'Personality assessment tests',
+      'AI-powered career recommendations',
+      'Real-time chat interface',
+      'Korean language support',
+    ],
+    liveUrl: 'https://example.com',
+    githubUrl: 'https://github.com',
+    status: 'completed',
+    date: '2024',
+  },
+  {
+    title: 'E-Commerce Platform',
+    description: 'A full-featured e-commerce platform with real-time inventory management, payment processing, and admin dashboard.',
+    image: '/api/placeholder/600/400',
+    technologies: ['Next.js', 'TypeScript', 'PostgreSQL', 'Stripe', 'Redis', 'Docker'],
+    features: [
+      'User authentication & authorization',
+      'Shopping cart & wishlist',
+      'Payment integration',
+      'Admin dashboard',
+      'Real-time notifications',
+    ],
+    liveUrl: 'https://example.com',
+    githubUrl: 'https://github.com',
+    status: 'completed',
+    date: '2023',
+  },
+  {
+    title: 'Task Management System',
+    description: 'A collaborative task management tool with real-time updates, team collaboration features, and advanced analytics.',
+    image: '/api/placeholder/600/400',
+    technologies: ['Vue.js', 'Node.js', 'MongoDB', 'Socket.io', 'Express.js'],
+    features: [
+      'Real-time collaboration',
+      'Drag & drop interface',
+      'Team management',
+      'Progress tracking',
+      'Analytics dashboard',
+    ],
+    liveUrl: 'https://example.com',
+    githubUrl: 'https://github.com',
+    status: 'completed',
+    date: '2023',
+  },
+  {
+    title: 'Weather Dashboard',
+    description: 'A beautiful weather dashboard with location-based forecasts, interactive maps, and historical weather data visualization.',
+    image: '/api/placeholder/600/400',
+    technologies: ['React', 'TypeScript', 'Chart.js', 'OpenWeather API', 'Tailwind CSS'],
+    features: [
+      'Location-based weather',
+      'Interactive maps',
+      'Historical data',
+      'Weather alerts',
+      'Responsive design',
+    ],
+    liveUrl: 'https://example.com',
+    githubUrl: 'https://github.com',
+    status: 'completed',
+    date: '2022',
+  },
+  {
+    title: 'Social Media Analytics',
+    description: 'Analytics platform for social media performance tracking with automated reporting and sentiment analysis.',
+    image: '/api/placeholder/600/400',
+    technologies: ['Python', 'Django', 'React', 'PostgreSQL', 'Celery', 'Redis'],
+    features: [
+      'Multi-platform integration',
+      'Sentiment analysis',
+      'Automated reports',
+      'Data visualization',
+      'API integration',
+    ],
+    liveUrl: 'https://example.com',
+    githubUrl: 'https://github.com',
+    status: 'in-progress',
+    date: '2024',
+  },
+  {
+    title: 'Portfolio Website',
+    description: 'A modern, responsive portfolio website built with cutting-edge web technologies and optimized for performance.',
+    image: '/api/placeholder/600/400',
+    technologies: ['React', 'TypeScript', 'Framer Motion', 'Tailwind CSS', 'Vite'],
+    features: [
+      'Smooth animations',
+      'Responsive design',
+      'Dark mode',
+      'Contact form',
+      'SEO optimized',
+    ],
+    liveUrl: 'https://example.com',
+    githubUrl: 'https://github.com',
+    status: 'completed',
+    date: '2024',
+  },
+];
