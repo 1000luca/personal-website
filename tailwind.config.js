@@ -51,6 +51,7 @@ export default {
         'gradient': 'gradient 8s ease infinite',
         'float': 'float 3s ease-in-out infinite',
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'shine': 'shine 1s',
       },
       keyframes: {
         gradient: {
@@ -66,6 +67,9 @@ export default {
         float: {
           '0%, 100%': { transform: 'translateY(0px)' },
           '50%': { transform: 'translateY(-10px)' },
+        },
+        shine: {
+          '100%': { left: '125%' },
         },
       },
       backdropBlur: {

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Github, Linkedin, Mail } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { navItems } from '../constants/navigation';
 import { useScrollPosition, useSmoothScroll } from '../hooks';
 
@@ -9,12 +10,22 @@ const Navbar = () => {
   const { scrollY } = useScrollPosition();
   const { scrollToSection } = useSmoothScroll();
   const [activeSection, setActiveSection] = useState('home');
+  const location = useLocation();
+  const navigate = useNavigate();
 
+  const isHomePage = location.pathname === '/';
   const scrolled = scrollY > 50;
 
   // Track active section
   useEffect(() => {
-    const sections = navItems.map(item => item.href.replace('#', ''));
+    if (!isHomePage) {
+      setActiveSection('contact');
+      return;
+    }
+
+    const sections = navItems
+      .filter(item => item.href.startsWith('#'))
+      .map(item => item.href.replace('#', ''));
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -33,7 +44,7 @@ const Navbar = () => {
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [isHomePage]);
 
   // Close mobile menu on escape key
   useEffect(() => {
@@ -56,7 +67,22 @@ const Navbar = () => {
   }, [isOpen]);
 
   const handleNavClick = (href: string) => {
-    scrollToSection(href);
+    if (href === '#contact') {
+      navigate('/contact');
+      setIsOpen(false);
+      return;
+    }
+
+    if (isHomePage) {
+      scrollToSection(href);
+    } else {
+      // If not on home page, navigate to home with hash
+      navigate('/');
+      // Delay scrolling to allow page transition
+      setTimeout(() => {
+        scrollToSection(href);
+      }, 100);
+    }
     setIsOpen(false);
   };
 
@@ -75,20 +101,22 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <button
-              onClick={() => scrollToSection('#home')}
+            <Link
+              to="/"
+              onClick={() => isHomePage && scrollToSection('#home')}
               className="text-2xl font-bold gradient-text hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-emerald-400 rounded"
               aria-label="Go to home"
             >
               천현재
-            </button>
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-8">
               {navItems.map((item) => {
-                const isActive = activeSection === item.href.replace('#', '');
+                const isActive = activeSection === item.href.replace('#', '') || 
+                                (item.href === '#contact' && location.pathname === '/contact');
                 return (
                   <button
                     key={item.label}
@@ -170,26 +198,35 @@ const Navbar = () => {
             className="md:hidden glass-effect border-t border-white/10 overflow-hidden"
           >
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              {navItems.map((item) => {
-                const isActive = activeSection === item.href.replace('#', '');
+              {navItems.map((item, index) => {
+                const isActive = activeSection === item.href.replace('#', '') || 
+                                (item.href === '#contact' && location.pathname === '/contact');
                 return (
-                  <button
+                  <motion.button
                     key={item.label}
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: index * 0.05 }}
                     onClick={() => handleNavClick(item.href)}
                     className={`w-full text-left px-3 py-2 rounded-md text-base font-medium transition-colors ${
                       isActive
-                        ? 'text-emerald-300 bg-emerald-500/10'
+                        ? 'text-emerald-300 bg-emerald-500/10 border-l-2 border-emerald-500'
                         : 'text-slate-200/80 hover:text-emerald-300 hover:bg-slate-800/50'
                     }`}
                     aria-current={isActive ? 'page' : undefined}
                   >
                     {item.label}
-                  </button>
+                  </motion.button>
                 );
               })}
 
               {/* Mobile Social Links */}
-              <div className="flex items-center justify-center space-x-6 pt-4 pb-2 border-t border-white/10 mt-4">
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="flex items-center justify-center space-x-6 pt-4 pb-2 border-t border-white/10 mt-4"
+              >
                 <a
                   href="https://github.com"
                   target="_blank"
@@ -215,7 +252,7 @@ const Navbar = () => {
                 >
                   <Mail size={22} />
                 </a>
-              </div>
+              </motion.div>
             </div>
           </motion.div>
         )}

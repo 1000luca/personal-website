@@ -128,13 +128,15 @@ const SkillCategoryCard = ({ category, index }: { category: typeof skillCategori
               <span className="text-sm text-slate-200/90 font-medium">{skill.name}</span>
               <span className="text-sm text-slate-400 tabular-nums">{skill.level}%</span>
             </div>
-            <div className="w-full bg-slate-800/80 rounded-full h-2 overflow-hidden">
+            <div className="w-full bg-slate-800/80 rounded-full h-2 overflow-hidden ring-1 ring-white/5">
               <motion.div
                 initial={{ width: 0 }}
                 animate={hasIntersected ? { width: `${skill.level}%` } : { width: 0 }}
                 transition={{ duration: 1, delay: index * 0.1, ease: 'easeOut' }}
-                className="bg-gradient-to-r from-emerald-400 to-amber-400 h-2 rounded-full"
-              />
+                className="bg-gradient-to-r from-emerald-400 to-amber-400 h-2 rounded-full shadow-[0_0_10px_rgba(52,211,153,0.5)] relative"
+              >
+                  <div className="absolute top-0 right-0 bottom-0 w-full bg-gradient-to-b from-white/20 to-transparent" />
+              </motion.div>
             </div>
           </div>
         ))}
