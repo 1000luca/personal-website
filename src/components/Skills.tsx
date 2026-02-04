@@ -117,7 +117,7 @@ const SkillCategoryCard = ({ category, index }: { category: typeof skillCategori
     >
       <div className="flex items-center gap-3 mb-4">
         <div className="p-2 bg-gradient-to-r from-emerald-400 to-amber-300 rounded-lg text-slate-900">
-          {category.icon}
+          <category.icon size={24} />
         </div>
         <h4 className="text-xl font-semibold">{category.title}</h4>
       </div>

@@ -9,7 +9,7 @@ import type { SkillCategory, Experience } from '../types';
 export const skillCategories: SkillCategory[] = [
   {
     title: 'Frontend',
-    icon: Palette({ size: 24 }),
+    icon: Palette,
     skills: [
       { name: 'React', level: 90 },
       { name: 'TypeScript', level: 85 },
@@ -20,7 +20,7 @@ export const skillCategories: SkillCategory[] = [
   },
   {
     title: 'Backend',
-    icon: Server({ size: 24 }),
+    icon: Server,
     skills: [
       { name: 'Node.js', level: 85 },
       { name: 'Python', level: 80 },
@@ -31,7 +31,7 @@ export const skillCategories: SkillCategory[] = [
   },
   {
     title: 'Database',
-    icon: Database({ size: 24 }),
+    icon: Database,
     skills: [
       { name: 'PostgreSQL', level: 80 },
       { name: 'MongoDB', level: 85 },
@@ -42,7 +42,7 @@ export const skillCategories: SkillCategory[] = [
   },
   {
     title: 'Mobile',
-    icon: Smartphone({ size: 24 }),
+    icon: Smartphone,
     skills: [
       { name: 'React Native', level: 75 },
       { name: 'Flutter', level: 70 },
@@ -52,7 +52,7 @@ export const skillCategories: SkillCategory[] = [
   },
   {
     title: 'Cloud & DevOps',
-    icon: Cloud({ size: 24 }),
+    icon: Cloud,
     skills: [
       { name: 'AWS', level: 78 },
       { name: 'Docker', level: 75 },
@@ -63,7 +63,7 @@ export const skillCategories: SkillCategory[] = [
   },
   {
     title: 'Tools & Others',
-    icon: Code({ size: 24 }),
+    icon: Code,
     skills: [
       { name: 'Git', level: 90 },
       { name: 'Figma', level: 75 },

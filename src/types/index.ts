@@ -26,7 +26,7 @@ export interface Skill {
 
 export interface SkillCategory {
   title: string;
-  icon: ReactNode;
+  icon: React.ComponentType<{ size?: number }>;
   skills: Skill[];
 }
 
@@ -41,7 +41,7 @@ export interface Experience {
 
 // Contact Types
 export interface ContactInfo {
-  icon: ReactNode;
+  icon: React.ComponentType<{ size?: number }>;
   label: string;
   value: string;
   href: string;
@@ -63,7 +63,7 @@ export interface FormErrors {
 
 // Social Links
 export interface SocialLink {
-  icon: ReactNode;
+  icon: React.ComponentType<{ size?: number }>;
   label: string;
   href: string;
 }

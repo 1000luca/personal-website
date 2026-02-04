@@ -1,13 +1,12 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Send } from 'lucide-react';
-import { containerVariants, itemVariants, fadeIn } from '../constants/animations';
+import toast from 'react-hot-toast';
+import { containerVariants, itemVariants } from '../constants/animations';
 import { contactInfo, socialLinks } from '../constants/contact';
 import { useFormValidation } from '../hooks';
 import type { FormData } from '../types';
 
 const Contact = () => {
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   const initialValues: FormData = {
     name: '',
@@ -29,21 +28,35 @@ const Contact = () => {
 
   const onSubmit = async (formData: FormData) => {
     try {
+      // Show loading toast
+      const loadingToast = toast.loading('메시지를 전송하고 있습니다...');
+
       // Simulate API call - Replace with actual email service (EmailJS, etc.)
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
       console.log('Form submitted:', formData);
-      setSubmitStatus('success');
 
-      // Reset success message after 5 seconds
-      setTimeout(() => setSubmitStatus('idle'), 5000);
+      // Dismiss loading and show success
+      toast.dismiss(loadingToast);
+      toast.success(
+        `감사합니다, ${formData.name}님! 곧 연락드리겠습니다.`,
+        {
+          duration: 5000,
+          icon: '✅',
+        }
+      );
     } catch (error) {
       console.error('Form submission error:', error);
-      setSubmitStatus('error');
-      setIsSubmitting(false);
 
-      // Reset error message after 5 seconds
-      setTimeout(() => setSubmitStatus('idle'), 5000);
+      toast.error(
+        '메시지 전송에 실패했습니다. 다시 시도해주세요.',
+        {
+          duration: 5000,
+          icon: '❌',
+        }
+      );
+
+      setIsSubmitting(false);
     }
   };
 
@@ -94,7 +107,7 @@ const Contact = () => {
                     className="flex items-center gap-4 p-4 glass-effect rounded-lg hover:border-emerald-300/50 transition-colors duration-200 group"
                   >
                     <div className="p-2 bg-gradient-to-r from-emerald-400 to-amber-300 rounded-lg text-slate-900 group-hover:scale-110 transition-transform duration-200">
-                      {info.icon}
+                      <info.icon size={20} />
                     </div>
                     <div>
                       <p className="text-sm text-slate-400">{info.label}</p>
@@ -118,7 +131,7 @@ const Contact = () => {
                     aria-label={social.label}
                   >
                     <div className="text-slate-300 group-hover:text-emerald-200 group-hover:scale-110 transition-all duration-200">
-                      {social.icon}
+                      <social.icon size={20} />
                     </div>
                   </a>
                 ))}
@@ -268,36 +281,6 @@ const Contact = () => {
                 )}
               </button>
 
-              {/* Success/Error Messages */}
-              <AnimatePresence mode="wait">
-                {submitStatus === 'success' && (
-                  <motion.div
-                    variants={fadeIn}
-                    initial="hidden"
-                    animate="visible"
-                    exit="hidden"
-                    className="p-4 bg-emerald-500/20 border border-emerald-400/30 rounded-lg text-emerald-300 text-center"
-                    role="status"
-                    aria-live="polite"
-                  >
-                    ✓ Thank you for your message! I'll get back to you soon.
-                  </motion.div>
-                )}
-                {submitStatus === 'error' && (
-                  <motion.div
-                    variants={fadeIn}
-                    initial="hidden"
-                    animate="visible"
-                    exit="hidden"
-                    className="p-4 bg-red-500/20 border border-red-400/30 rounded-lg text-red-300 text-center"
-                    role="alert"
-                    aria-live="assertive"
-                  >
-                    ✗ Something went wrong. Please try again or contact me directly at{' '}
-                    {contactInfo[0].value}.
-                  </motion.div>
-                )}
-              </AnimatePresence>
             </form>
           </motion.div>
         </div>

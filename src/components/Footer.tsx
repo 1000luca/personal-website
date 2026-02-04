@@ -48,7 +48,7 @@ const Footer = () => {
                   aria-label={`Visit ${social.label}`}
                 >
                   <div className="text-slate-400 group-hover:text-emerald-200 group-hover:scale-110 transition-all duration-200">
-                    {social.icon}
+                    <social.icon size={20} />
                   </div>
                 </a>
               ))}

@@ -8,19 +8,19 @@ import type { ContactInfo, SocialLink } from '../types';
 
 export const contactInfo: ContactInfo[] = [
   {
-    icon: Mail({ size: 20 }),
+    icon: Mail,
     label: 'Email',
     value: 'cheon@example.com',
     href: 'mailto:cheon@example.com',
   },
   {
-    icon: Phone({ size: 20 }),
+    icon: Phone,
     label: 'Phone',
     value: '+82 10-1234-5678',
     href: 'tel:+821012345678',
   },
   {
-    icon: MapPin({ size: 20 }),
+    icon: MapPin,
     label: 'Location',
     value: 'Seoul, South Korea',
     href: '#',
@@ -29,17 +29,17 @@ export const contactInfo: ContactInfo[] = [
 
 export const socialLinks: SocialLink[] = [
   {
-    icon: Github({ size: 20 }),
+    icon: Github,
     label: 'GitHub',
     href: 'https://github.com',
   },
   {
-    icon: Linkedin({ size: 20 }),
+    icon: Linkedin,
     label: 'LinkedIn',
     href: 'https://linkedin.com',
   },
   {
-    icon: Twitter({ size: 20 }),
+    icon: Twitter,
     label: 'Twitter',
     href: 'https://twitter.com',
   },
