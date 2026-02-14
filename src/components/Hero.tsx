@@ -1,17 +1,27 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowDown, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { containerVariants, itemVariants } from '../constants/animations';
-import { personalInfo } from '../constants/personal';
+import { MockDataService } from '../services/mockDataService';
 import { useSmoothScroll } from '../hooks';
 
 const Hero = () => {
   const { scrollToSection } = useSmoothScroll();
   const navigate = useNavigate();
+  const [personal, setPersonal] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchPersonal = async () => {
+      const data = await MockDataService.getPersonalInfo();
+      setPersonal(data);
+    };
+    fetchPersonal();
+  }, []);
 
   const handleDownloadCV = () => {
-    // Open CV in new tab or trigger download
-    window.open(personalInfo.cvUrl, '_blank');
+    if (personal) {
+      window.open(personal.cvUrl, '_blank');
+    }
   };
 
   const handleContactClick = (e: React.MouseEvent) => {
@@ -19,132 +29,105 @@ const Hero = () => {
     navigate('/contact');
   };
 
+  if (!personal) return null;
+
   return (
     <section
       id="home"
-      className="min-h-screen flex items-center justify-center hero-aurora relative overflow-hidden"
+      className="min-h-screen flex items-center justify-center relative overflow-hidden"
     >
-      {/* Animated background blobs */}
-      <div className="absolute inset-0" aria-hidden="true">
-        <motion.div
-          animate={{
-            scale: [1, 1.1, 1],
-            opacity: [0.3, 0.4, 0.3],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-          className="absolute -top-24 -left-20 h-72 w-72 rounded-full bg-emerald-500/30 blur-3xl"
-        />
-        <motion.div
-          animate={{
-            scale: [1, 1.15, 1],
-            opacity: [0.3, 0.35, 0.3],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: 1,
-          }}
-          className="absolute top-16 right-[-6rem] h-80 w-80 rounded-full bg-amber-500/30 blur-3xl"
-        />
-        <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.2, 0.25, 0.2],
-          }}
-          transition={{
-            duration: 12,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: 2,
-          }}
-          className="absolute bottom-[-10rem] left-1/3 h-96 w-96 rounded-full bg-sky-500/20 blur-3xl"
-        />
-      </div>
-      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/60" />
+      {/* Subtle decorative element */}
+      <div className="absolute top-32 right-12 w-px h-32 bg-gradient-to-b from-transparent via-[var(--stroke)] to-transparent opacity-40" aria-hidden="true" />
+      <div className="absolute bottom-32 left-12 w-px h-32 bg-gradient-to-b from-transparent via-[var(--stroke)] to-transparent opacity-40" aria-hidden="true" />
 
       {/* Main content */}
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="text-center z-10 px-4 max-w-4xl mx-auto"
-      >
-        <motion.h1
-          variants={itemVariants}
-          className="text-5xl md:text-7xl font-bold text-white mb-6 leading-[1.05] tracking-tight"
+      <div className="max-w-4xl mx-auto px-8 py-40">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+          className="space-y-16"
         >
-          Hi, I'm{' '}
-          <span className="gradient-text relative inline-block" lang="ko">
-            {personalInfo.name}
-            <motion.span
+          {/* Introduction */}
+          <div className="space-y-6">
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1, ease: [0.4, 0, 0.2, 1] }}
+              className="text-lg text-secondary font-light tracking-wide uppercase"
+            >
+              Portfolio 2024
+            </motion.p>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2, ease: [0.4, 0, 0.2, 1] }}
+              className="text-6xl md:text-7xl lg:text-8xl font-display font-semibold text-primary leading-[0.95]"
+            >
+              {personal.name}
+            </motion.h1>
+
+            <motion.div
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
-              transition={{ delay: 1, duration: 0.8, ease: "circOut" }}
-              className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-amber-300 rounded-full origin-left opacity-60"
+              transition={{ duration: 0.8, delay: 0.4, ease: [0.4, 0, 0.2, 1] }}
+              className="h-px w-48 bg-gradient-to-r from-[var(--accent)] to-transparent origin-left"
             />
-          </span>
-        </motion.h1>
+          </div>
 
-        <motion.p
-          variants={itemVariants}
-          className="text-xl md:text-2xl text-slate-200/90 mb-8 leading-relaxed font-light"
-        >
-          {personalInfo.title}
-        </motion.p>
-
-        <motion.p
-          variants={itemVariants}
-          className="text-lg text-slate-300 mb-4 max-w-2xl mx-auto"
-        >
-          {personalInfo.tagline}
-        </motion.p>
-
-        <motion.p
-          variants={itemVariants}
-          className="text-base text-slate-400 mb-12 max-w-2xl mx-auto"
-        >
-          {personalInfo.description}
-        </motion.p>
-
-        <motion.div
-          variants={itemVariants}
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-        >
-          <button
-            onClick={handleContactClick}
-            className="group relative px-8 py-3 bg-gradient-to-r from-emerald-400 via-emerald-300 to-amber-300 text-slate-900 rounded-full font-bold shadow-[0_12px_30px_rgba(16,185,129,0.35)] hover:shadow-[0_20px_40px_rgba(16,185,129,0.45)] transform hover:-translate-y-1 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-slate-900 overflow-hidden"
-            aria-label="Navigate to contact section"
+          {/* Title & Description */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5, ease: [0.4, 0, 0.2, 1] }}
+            className="space-y-8 max-w-2xl"
           >
-            <span className="relative z-10">Get In Touch</span>
-            <div className="absolute inset-0 h-full w-full scale-0 rounded-full transition-all duration-300 group-hover:scale-100 group-hover:bg-white/20" />
-            <div className="absolute -inset-full top-0 block h-full w-1/2 -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-40 group-hover:animate-shine" />
-          </button>
+            <h2 className="text-3xl md:text-4xl font-display font-medium text-primary">
+              {personal.title}
+            </h2>
 
-          <button
-            onClick={handleDownloadCV}
-            className="group px-8 py-3 glass-effect text-slate-100 rounded-full font-semibold hover:bg-white/5 hover:border-emerald-300/50 hover:text-emerald-200 transition-all duration-200 flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-slate-900"
-            aria-label="Download CV"
+            <p className="text-xl text-secondary leading-relaxed">
+              {personal.tagline}
+            </p>
+          </motion.div>
+
+          {/* Actions */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6, ease: [0.4, 0, 0.2, 1] }}
+            className="flex flex-col sm:flex-row gap-4 pt-4"
           >
-            <Download size={18} className="group-hover:animate-bounce" />
-            Download CV
-          </button>
+            <button
+              onClick={handleContactClick}
+              className="btn-primary"
+              aria-label="Navigate to contact section"
+            >
+              Get In Touch
+            </button>
+
+            <button
+              onClick={handleDownloadCV}
+              className="btn-secondary flex items-center gap-3"
+              aria-label="Download CV"
+            >
+              <Download size={18} />
+              Download CV
+            </button>
+          </motion.div>
         </motion.div>
-      </motion.div>
+      </div>
 
       {/* Scroll indicator */}
       <motion.button
         onClick={() => scrollToSection('#about')}
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-slate-200/80 hover:text-emerald-300 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-400 rounded p-2"
+        animate={{ y: [0, 8, 0] }}
+        transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute bottom-12 left-1/2 transform -translate-x-1/2 text-secondary hover:text-accent transition-colors duration-400 cursor-pointer"
         aria-label="Scroll to about section"
       >
-        <ArrowDown size={24} />
+        <ArrowDown size={20} strokeWidth={1.5} />
       </motion.button>
     </section>
   );

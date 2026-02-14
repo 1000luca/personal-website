@@ -1,0 +1,4 @@
+interface:
+  display_name: "Web Discovery"
+  short_description: "Plan website scope, goals, sitemap, and content"
+  default_prompt: "Use -discovery to produce a clear website brief and sitemap."

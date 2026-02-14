@@ -1,88 +1,98 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';
-import { socialLinks } from '../constants/contact';
-import { personalInfo } from '../constants/personal';
+import { MockDataService } from '../services/mockDataService';
 import { useSmoothScroll } from '../hooks';
-import { fadeInUp } from '../constants/animations';
 
 const Footer = () => {
   const { scrollToTop } = useSmoothScroll();
   const currentYear = new Date().getFullYear();
+  const [personal, setPersonal] = useState<any>(null);
+  const [socials, setSocials] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const [p, s] = await Promise.all([
+        MockDataService.getPersonalInfo(),
+        MockDataService.getSocialLinks()
+      ]);
+      setPersonal(p);
+      setSocials(s);
+    };
+    fetchData();
+  }, []);
+
+  if (!personal) return null;
 
   return (
-    <footer className="py-12 section-veil border-t border-white/10">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-8">
+    <footer className="py-16 section-veil border-t border-[var(--border-light)]">
+      <div className="max-w-6xl mx-auto px-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-12">
           {/* Brand */}
           <motion.div
-            variants={fadeInUp}
-            initial="hidden"
-            whileInView="visible"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
-            className="text-center md:text-left"
+            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+            className="space-y-2"
           >
-            <h3 className="text-2xl font-bold gradient-text mb-2" lang="ko">
-              {personalInfo.name}
+            <h3 className="text-2xl font-display font-semibold text-primary" lang="ko">
+              {personal.name}
             </h3>
-            <p className="text-slate-300 mb-4">{personalInfo.title}</p>
-            <p className="text-slate-400 text-sm">{personalInfo.tagline}</p>
+            <p className="text-base text-secondary">{personal.title}</p>
           </motion.div>
 
-          {/* Social Links & Back to Top */}
+          {/* Social Links */}
           <motion.div
-            variants={fadeInUp}
-            initial="hidden"
-            whileInView="visible"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
-            transition={{ delay: 0.1 }}
-            className="flex flex-col items-center gap-4"
+            transition={{ duration: 0.6, delay: 0.1, ease: [0.4, 0, 0.2, 1] }}
+            className="flex items-center gap-8"
           >
-            <div className="flex gap-4">
-              {socialLinks.map((social) => (
+            <div className="flex gap-6">
+              {socials.map((social) => (
                 <a
                   key={social.label}
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-3 glass-effect rounded-lg hover:border-emerald-300/50 transition-all duration-200 group focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  className="text-secondary hover:text-[var(--accent)] transition-colors duration-400"
                   aria-label={`Visit ${social.label}`}
                 >
-                  <div className="text-slate-400 group-hover:text-emerald-200 group-hover:scale-110 transition-all duration-200">
-                    <social.icon size={20} />
-                  </div>
+                  <social.icon size={20} strokeWidth={1.5} />
                 </a>
               ))}
             </div>
 
+            <div className="border-l border-[var(--stroke)] h-5" />
+
             <button
               onClick={scrollToTop}
-              className="p-3 glass-effect rounded-lg hover:border-emerald-300/50 transition-all duration-200 group focus:outline-none focus:ring-2 focus:ring-emerald-400"
+              className="text-secondary hover:text-[var(--accent)] transition-all duration-400 group"
               aria-label="Scroll back to top"
             >
-              <div className="text-slate-400 group-hover:text-emerald-200 group-hover:-translate-y-1 transition-all duration-200">
-                <ArrowUp size={20} />
-              </div>
+              <ArrowUp size={20} strokeWidth={1.5} className="group-hover:-translate-y-1 transition-transform duration-400" />
             </button>
           </motion.div>
         </div>
 
         {/* Copyright */}
         <motion.div
-          variants={fadeInUp}
-          initial="hidden"
-          whileInView="visible"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true, amount: 0.3 }}
-          transition={{ delay: 0.2 }}
-          className="mt-12 pt-8 border-t border-white/10 text-center"
+          transition={{ duration: 0.6, delay: 0.2, ease: [0.4, 0, 0.2, 1] }}
+          className="mt-16 pt-8 border-t border-[var(--border-light)]"
         >
-          <p className="text-slate-400 text-sm">
-            © {currentYear}{' '}
-            <span lang="ko">{personalInfo.name}</span> ({personalInfo.nameEn}). All rights
-            reserved.
-          </p>
-          <p className="text-slate-500 text-xs mt-2">
-            Built with React, TypeScript, Framer Motion & Tailwind CSS
-          </p>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 text-sm text-secondary">
+            <p>
+              © {currentYear} <span lang="ko">{personal.name}</span> · All rights reserved
+            </p>
+            <p className="text-xs">
+              React · TypeScript · Tailwind CSS · Framer Motion
+            </p>
+          </div>
         </motion.div>
       </div>
     </footer>

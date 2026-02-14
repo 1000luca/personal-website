@@ -1,0 +1,4 @@
+interface:
+  display_name: "Web Backend"
+  short_description: "Design APIs, data models, and integrations for web"
+  default_prompt: "Use -backend to plan and implement the API layer."

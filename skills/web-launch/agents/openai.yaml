@@ -1,0 +1,4 @@
+interface:
+  display_name: "Web Launch"
+  short_description: "QA, SEO, performance, analytics, and deployment"
+  default_prompt: "Use -launch to prepare a website for production release."

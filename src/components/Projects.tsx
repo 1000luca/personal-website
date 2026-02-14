@@ -1,132 +1,146 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ExternalLink, Github, Calendar } from 'lucide-react';
-import { containerVariants, itemVariants } from '../constants/animations';
-import { projects } from '../constants/projects';
+import { MockDataService } from '../services/mockDataService';
+import type { Project } from '../types';
 
 const Projects = () => {
+  const [projectList, setProjectList] = useState<Project[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const data = await MockDataService.getProjects();
+        setProjectList(data);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchProjects();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <section className="py-32 flex items-center justify-center">
+        <div className="w-10 h-10 border-2 border-[var(--accent)] border-t-transparent animate-spin" />
+      </section>
+    );
+  }
+
   return (
-    <section id="projects" className="py-24 section-veil">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="projects" className="py-32 section-veil">
+      <div className="max-w-6xl mx-auto px-8">
+        {/* Section Header */}
         <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
-          className="text-center mb-16"
+          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+          className="mb-24"
         >
-          <motion.h2
-            variants={itemVariants}
-            className="text-4xl md:text-5xl font-bold mb-4 text-slate-100"
-          >
-            <span className="gradient-text">Featured Projects</span>
-          </motion.h2>
-          <motion.p
-            variants={itemVariants}
-            className="text-slate-300 text-lg max-w-2xl mx-auto"
-          >
-            Explore my recent work and side projects that showcase my skills and passion for development.
-          </motion.p>
+          <h2 className="text-5xl md:text-6xl font-display font-semibold text-primary mb-6">
+            Selected Work
+          </h2>
+          <div className="h-px w-32 bg-gradient-to-r from-[var(--accent)] to-transparent mb-8" />
+          <p className="text-xl text-secondary max-w-2xl leading-relaxed">
+            A curated collection of projects showcasing my approach to design and development.
+          </p>
         </motion.div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
-          {projects.map((project) => (
-            <motion.div
+        {/* Projects Grid - Show only first 4 projects */}
+        <div className="space-y-16">
+          {projectList.slice(0, 4).map((project, index) => (
+            <motion.article
               key={project.title}
-              variants={itemVariants}
-              className="glass-effect rounded-xl overflow-hidden hover:shadow-[0_20px_50px_rgba(8,_112,_184,_0.7)] transition-all duration-500 group border border-white/5 hover:border-emerald-500/30 flex flex-col h-full"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.6, delay: index * 0.1, ease: [0.4, 0, 0.2, 1] }}
+              className="refined-card p-8 md:p-12 group"
             >
-              <div className="relative overflow-hidden h-48">
-                <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-900 to-black transform group-hover:scale-110 transition-transform duration-700 ease-out" />
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-500" />
-                
-                <div className="absolute top-4 right-4 flex gap-2 z-10">
-                  <span className={`px-2.5 py-1 text-[10px] uppercase tracking-wider font-bold rounded-full backdrop-blur-md shadow-lg ${
-                    project.status === 'completed' 
-                      ? 'bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-500/50'
-                      : 'bg-amber-500/20 text-amber-300 ring-1 ring-amber-500/50'
-                  }`}>
-                    {project.status === 'completed' ? 'Completed' : 'In Progress'}
-                  </span>
-                </div>
-                <div className="absolute bottom-4 left-4 flex items-center gap-2 text-slate-300 z-10 backdrop-blur-sm px-2 py-1 rounded bg-black/20">
-                  <Calendar size={14} />
-                  <span className="text-xs font-medium">{project.date}</span>
-                </div>
-              </div>
+              <div className="grid md:grid-cols-2 gap-12 items-start">
+                {/* Project Info */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm text-secondary font-light tracking-wider uppercase">
+                      {project.date}
+                    </span>
+                    <span className={`px-3 py-1 text-xs uppercase tracking-wider font-medium border ${
+                      project.status === 'completed'
+                        ? 'border-[var(--accent-2)] text-[var(--accent-2)]'
+                        : 'border-[var(--accent)] text-[var(--accent)]'
+                    }`}>
+                      {project.status === 'completed' ? 'Completed' : 'In Progress'}
+                    </span>
+                  </div>
 
-              <div className="p-6 flex flex-col flex-grow">
-                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors duration-300">
-                  {project.title}
-                </h3>
-                
-                <p className="text-slate-300/90 text-sm mb-4 line-clamp-2 flex-grow leading-relaxed">
-                  {project.description}
-                </p>
+                  <h3 className="text-3xl md:text-4xl font-display font-semibold text-primary group-hover:text-[var(--accent)] transition-colors duration-400">
+                    {project.title}
+                  </h3>
 
-                <div className="mb-6">
-                  <div className="flex flex-wrap gap-2">
-                    {project.technologies.slice(0, 3).map((tech) => (
+                  <p className="text-lg text-secondary leading-relaxed">
+                    {project.description}
+                  </p>
+
+                  {/* Technologies */}
+                  <div className="flex flex-wrap gap-3">
+                    {project.technologies.map((tech) => (
                       <span
                         key={tech}
-                        className="px-2.5 py-1 bg-slate-800/50 text-emerald-200/90 text-xs font-medium rounded-md ring-1 ring-white/10"
+                        className="text-sm text-secondary font-medium"
                       >
                         {tech}
                       </span>
                     ))}
-                    {project.technologies.length > 3 && (
-                      <span className="px-2.5 py-1 bg-slate-800/50 text-slate-400 text-xs font-medium rounded-md ring-1 ring-white/10">
-                        +{project.technologies.length - 3}
-                      </span>
-                    )}
                   </div>
                 </div>
 
-                <div className="flex gap-3 mt-auto">
+                {/* Project Actions */}
+                <div className="flex flex-col gap-4 md:items-end">
                   <a
                     href={project.liveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-slate-900 text-sm font-bold rounded-lg shadow-lg shadow-emerald-900/20 hover:shadow-emerald-900/40 transform hover:-translate-y-0.5 transition-all duration-200"
+                    className="inline-flex items-center gap-3 text-primary hover:text-[var(--accent)] transition-colors duration-400 group/link"
                   >
-                    <ExternalLink size={16} />
-                    Live Demo
+                    <span className="text-lg font-medium">View Project</span>
+                    <ExternalLink size={20} strokeWidth={1.5} className="group-hover/link:translate-x-1 group-hover/link:-translate-y-1 transition-transform duration-400" />
                   </a>
+
                   <a
                     href={project.githubUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 glass-effect text-slate-200 text-sm font-semibold rounded-lg hover:bg-white/5 hover:text-white hover:border-emerald-500/30 transition-all duration-200"
+                    className="inline-flex items-center gap-3 text-secondary hover:text-[var(--accent)] transition-colors duration-400 group/link"
                   >
-                    <Github size={16} />
-                    Source
+                    <span className="text-base font-medium">Source Code</span>
+                    <Github size={18} strokeWidth={1.5} className="group-hover/link:translate-x-1 transition-transform duration-400" />
                   </a>
                 </div>
               </div>
-            </motion.div>
+            </motion.article>
           ))}
-        </motion.div>
+        </div>
 
+        {/* View More */}
         <motion.div
-          variants={itemVariants}
-          initial="hidden"
-          whileInView="visible"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
-          className="text-center mt-12"
+          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+          className="mt-24 text-center"
         >
           <a
             href="https://github.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 glass-effect text-slate-100 rounded-full font-semibold hover:border-emerald-300/50 transform hover:-translate-y-0.5 transition-all duration-200"
+            className="inline-flex items-center gap-3 text-primary hover:text-[var(--accent)] transition-colors duration-400 group"
           >
-            <Github size={20} />
-            View More on GitHub
+            <Github size={20} strokeWidth={1.5} />
+            <span className="text-lg font-medium border-b border-transparent group-hover:border-[var(--accent)] transition-all duration-400">
+              View All Projects
+            </span>
           </a>
         </motion.div>
       </div>

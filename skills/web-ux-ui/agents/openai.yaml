@@ -1,0 +1,4 @@
+interface:
+  display_name: "Web UX/UI"
+  short_description: "Create UI direction, tokens, components, and layouts"
+  default_prompt: "Use -ux-ui to define the visual system and page layouts."

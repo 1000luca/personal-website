@@ -1,147 +1,136 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { containerVariants, itemVariantsFast } from '../constants/animations';
-import { skillCategories, experiences } from '../constants/skills';
-import { useIntersectionObserver } from '../hooks';
+import { MockDataService } from '../services/mockDataService';
+import type { SkillCategory, Experience } from '../types';
 
 const Skills = () => {
+  const [categories, setCategories] = useState<SkillCategory[]>([]);
+  const [workExperiences, setWorkExperiences] = useState<Experience[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [skillsData, expData] = await Promise.all([
+          MockDataService.getSkills(),
+          MockDataService.getExperiences()
+        ]);
+        setCategories(skillsData);
+        setWorkExperiences(expData);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <section className="py-32 flex items-center justify-center">
+        <div className="w-10 h-10 border-2 border-[var(--accent)] border-t-transparent animate-spin" />
+      </section>
+    );
+  }
 
   return (
-    <section id="skills" className="py-24 section-alt">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="skills" className="py-32 section-veil">
+      <div className="max-w-6xl mx-auto px-8">
+        {/* Section Header */}
         <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
-          className="text-center mb-16"
+          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+          className="mb-24"
         >
-          <motion.h2
-            variants={itemVariantsFast}
-            className="text-4xl md:text-5xl font-bold mb-4 text-slate-100"
-          >
-            <span className="gradient-text">Skills & Experience</span>
-          </motion.h2>
-          <motion.p
-            variants={itemVariantsFast}
-            className="text-slate-300 text-lg max-w-2xl mx-auto"
-          >
-            My technical expertise and professional journey in web development.
-          </motion.p>
+          <h2 className="text-5xl md:text-6xl font-display font-semibold text-primary mb-6">
+            Expertise
+          </h2>
+          <div className="h-px w-32 bg-gradient-to-r from-[var(--accent)] to-transparent mb-8" />
+          <p className="text-xl text-secondary max-w-2xl leading-relaxed">
+            Technical skills and professional experience cultivated through years of development.
+          </p>
         </motion.div>
 
-        <div className="mb-20">
-          <motion.h3
-            variants={itemVariantsFast}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            className="text-2xl font-semibold mb-8 text-center text-slate-100"
-          >
-            Technical Skills
-          </motion.h3>
-
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.2 }}
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            {skillCategories.map((category, categoryIndex) => (
-              <SkillCategoryCard
-                key={category.title}
-                category={category}
-                index={categoryIndex}
-              />
-            ))}
-          </motion.div>
-        </div>
-
-        <div>
-          <motion.h3
-            variants={itemVariantsFast}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            className="text-2xl font-semibold mb-8 text-center text-slate-100"
-          >
-            Work Experience
-          </motion.h3>
-
-          <div className="space-y-6">
-            {experiences.map((exp, index) => (
-              <motion.div
-                key={index}
-                variants={itemVariantsFast}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.3 }}
-                className="glass-effect p-8 rounded-xl hover:shadow-2xl transition-shadow duration-300"
-              >
-                <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-4">
-                  <div>
-                    <h4 className="text-xl font-semibold text-white mb-2">{exp.title}</h4>
-                    <p className="text-emerald-300 font-medium">{exp.company}</p>
+        {/* Skills Grid - Show only first 4 categories */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, delay: 0.1, ease: [0.4, 0, 0.2, 1] }}
+          className="grid md:grid-cols-2 lg:grid-cols-4 gap-16 mb-32"
+        >
+          {categories.slice(0, 4).map((category, index) => (
+            <motion.div
+              key={category.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.6, delay: index * 0.1, ease: [0.4, 0, 0.2, 1] }}
+              className="space-y-6"
+            >
+              <h3 className="text-xl font-display font-medium text-primary">
+                {category.title}
+              </h3>
+              <div className="space-y-4">
+                {category.skills.slice(0, 4).map((skill) => (
+                  <div key={skill.name}>
+                    <span className="text-base text-secondary">{skill.name}</span>
                   </div>
-                  <span className="text-slate-400 text-sm mt-2 md:mt-0 flex items-center gap-1">
-                    📅 {exp.period}
-                  </span>
+                ))}
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Experience */}
+        <div className="space-y-12">
+          <motion.h3
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+            className="text-3xl font-display font-semibold text-primary"
+          >
+            Experience
+          </motion.h3>
+
+          {workExperiences.map((exp, index) => (
+            <motion.article
+              key={index}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.6, delay: index * 0.1, ease: [0.4, 0, 0.2, 1] }}
+              className="refined-card p-8 md:p-12 space-y-6"
+            >
+              <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+                <div className="space-y-2">
+                  <h4 className="text-2xl md:text-3xl font-display font-semibold text-primary">
+                    {exp.title}
+                  </h4>
+                  <p className="text-xl text-[var(--accent)]">{exp.company}</p>
                 </div>
-                <p className="text-slate-200/90 mb-4">{exp.description}</p>
-                <ul className="space-y-2">
-                  {exp.achievements.map((achievement, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <span className="text-emerald-300 mt-1 flex-shrink-0">✓</span>
-                      <span className="text-slate-200/90 text-sm">{achievement}</span>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            ))}
-          </div>
+                <span className="text-sm text-secondary font-light tracking-wider uppercase">
+                  {exp.period}
+                </span>
+              </div>
+
+              <p className="text-lg text-secondary leading-relaxed">{exp.description}</p>
+
+              <ul className="space-y-3 pt-4">
+                {exp.achievements.map((achievement, i) => (
+                  <li key={i} className="flex items-start gap-4">
+                    <span className="text-[var(--accent)] mt-1.5 flex-shrink-0">—</span>
+                    <span className="text-base text-secondary leading-relaxed">{achievement}</span>
+                  </li>
+                ))}
+              </ul>
+            </motion.article>
+          ))}
         </div>
       </div>
     </section>
-  );
-};
-
-// Skill Category Card Component
-const SkillCategoryCard = ({ category, index }: { category: typeof skillCategories[0]; index: number }) => {
-  const { targetRef, hasIntersected } = useIntersectionObserver({ threshold: 0.3 });
-
-  return (
-    <motion.div
-      ref={targetRef as React.RefObject<HTMLDivElement>}
-      variants={itemVariantsFast}
-      className="glass-effect p-6 rounded-xl hover:shadow-2xl transition-shadow duration-300"
-    >
-      <div className="flex items-center gap-3 mb-4">
-        <div className="p-2 bg-gradient-to-r from-emerald-400 to-amber-300 rounded-lg text-slate-900">
-          <category.icon size={24} />
-        </div>
-        <h4 className="text-xl font-semibold">{category.title}</h4>
-      </div>
-      <div className="space-y-3">
-        {category.skills.map((skill) => (
-          <div key={skill.name}>
-            <div className="flex justify-between mb-1">
-              <span className="text-sm text-slate-200/90 font-medium">{skill.name}</span>
-              <span className="text-sm text-slate-400 tabular-nums">{skill.level}%</span>
-            </div>
-            <div className="w-full bg-slate-800/80 rounded-full h-2 overflow-hidden ring-1 ring-white/5">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={hasIntersected ? { width: `${skill.level}%` } : { width: 0 }}
-                transition={{ duration: 1, delay: index * 0.1, ease: 'easeOut' }}
-                className="bg-gradient-to-r from-emerald-400 to-amber-400 h-2 rounded-full shadow-[0_0_10px_rgba(52,211,153,0.5)] relative"
-              >
-                  <div className="absolute top-0 right-0 bottom-0 w-full bg-gradient-to-b from-white/20 to-transparent" />
-              </motion.div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </motion.div>
   );
 };
 

@@ -147,3 +147,45 @@ export interface ToastProps {
   onClose: () => void;
   duration?: number;
 }
+
+// Auth Types
+export type AuthProvider = 'google' | 'apple' | 'kakao';
+
+export interface User {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  photoURL: string | null;
+  provider: AuthProvider;
+  emailVerified: boolean;
+  createdAt: string;
+}
+
+export interface AuthState {
+  user: User | null;
+  loading: boolean;
+  error: string | null;
+  initialized: boolean;
+}
+
+export interface AuthContextType extends AuthState {
+  signInWithGoogle: () => Promise<void>;
+  signInWithApple: () => Promise<void>;
+  signInWithKakao: () => Promise<void>;
+  signOut: () => Promise<void>;
+  getIdToken: () => Promise<string | null>;
+  refreshToken: () => Promise<void>;
+}
+
+export interface JWTTokens {
+  accessToken: string;
+  refreshToken: string;
+  expiresAt: number;
+}
+
+export interface TokenStorage {
+  getTokens: () => JWTTokens | null;
+  setTokens: (tokens: JWTTokens) => void;
+  clearTokens: () => void;
+  isTokenExpired: () => boolean;
+}

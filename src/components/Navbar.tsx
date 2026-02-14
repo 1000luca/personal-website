@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Github, Linkedin, Mail } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { navItems } from '../constants/navigation';
 import { useScrollPosition, useSmoothScroll } from '../hooks';
+import ThemeToggle from './ThemeToggle';
+import { navItems } from '../constants/navigation';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,7 +36,7 @@ const Navbar = () => {
           }
         });
       },
-      { threshold: 0.3, rootMargin: '-80px 0px 0px 0px' }
+      { threshold: 0.3, rootMargin: '-90px 0px 0px 0px' }
     );
 
     sections.forEach((section) => {
@@ -56,7 +57,6 @@ const Navbar = () => {
 
     if (isOpen) {
       document.addEventListener('keydown', handleEscape);
-      // Prevent body scroll when menu is open
       document.body.style.overflow = 'hidden';
     }
 
@@ -76,9 +76,7 @@ const Navbar = () => {
     if (isHomePage) {
       scrollToSection(href);
     } else {
-      // If not on home page, navigate to home with hash
       navigate('/');
-      // Delay scrolling to allow page transition
       setTimeout(() => {
         scrollToSection(href);
       }, 100);
@@ -90,21 +88,21 @@ const Navbar = () => {
     <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      transition={{ duration: 0.3 }}
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+      transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+      className={`fixed top-0 w-full z-50 transition-all duration-400 ${
         scrolled
-          ? 'glass-effect shadow-[0_12px_32px_rgba(2,6,23,0.6)] border-b border-white/10'
+          ? 'refined-card border-b border-[var(--border-medium)]'
           : 'bg-transparent'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+      <div className="max-w-7xl mx-auto px-8">
+        <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link
               to="/"
               onClick={() => isHomePage && scrollToSection('#home')}
-              className="text-2xl font-bold gradient-text hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-emerald-400 rounded"
+              className="text-2xl font-display font-semibold text-primary hover:text-[var(--accent)] transition-colors duration-400"
               aria-label="Go to home"
             >
               천현재
@@ -113,18 +111,18 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-8">
+            <div className="flex items-center space-x-12">
               {navItems.map((item) => {
-                const isActive = activeSection === item.href.replace('#', '') || 
+                const isActive = activeSection === item.href.replace('#', '') ||
                                 (item.href === '#contact' && location.pathname === '/contact');
                 return (
                   <button
                     key={item.label}
                     onClick={() => handleNavClick(item.href)}
-                    className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 relative ${
+                    className={`text-sm font-medium transition-colors duration-400 relative ${
                       isActive
-                        ? 'text-emerald-300'
-                        : 'text-slate-200/80 hover:text-emerald-300'
+                        ? 'text-primary'
+                        : 'text-secondary hover:text-primary'
                     }`}
                     aria-label={`Navigate to ${item.label}`}
                     aria-current={isActive ? 'page' : undefined}
@@ -133,7 +131,7 @@ const Navbar = () => {
                     {isActive && (
                       <motion.span
                         layoutId="activeSection"
-                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-400"
+                        className="absolute -bottom-1 left-0 right-0 h-px bg-[var(--accent)]"
                         initial={false}
                         transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                       />
@@ -144,44 +142,47 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Social Links */}
-          <div className="hidden md:flex items-center space-x-4">
+          {/* Social Links & Theme Toggle */}
+          <div className="hidden md:flex items-center space-x-6">
             <a
               href="https://github.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-slate-300 hover:text-emerald-300 transition-colors p-1 rounded focus:outline-none focus:ring-2 focus:ring-emerald-400"
+              className="text-secondary hover:text-[var(--accent)] transition-colors duration-400"
               aria-label="Visit GitHub profile"
             >
-              <Github size={20} />
+              <Github size={18} strokeWidth={1.5} />
             </a>
             <a
               href="https://linkedin.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-slate-300 hover:text-emerald-300 transition-colors p-1 rounded focus:outline-none focus:ring-2 focus:ring-emerald-400"
+              className="text-secondary hover:text-[var(--accent)] transition-colors duration-400"
               aria-label="Visit LinkedIn profile"
             >
-              <Linkedin size={20} />
+              <Linkedin size={18} strokeWidth={1.5} />
             </a>
             <a
               href="mailto:cheon@example.com"
-              className="text-slate-300 hover:text-emerald-300 transition-colors p-1 rounded focus:outline-none focus:ring-2 focus:ring-emerald-400"
+              className="text-secondary hover:text-[var(--accent)] transition-colors duration-400"
               aria-label="Send email"
             >
-              <Mail size={20} />
+              <Mail size={18} strokeWidth={1.5} />
             </a>
+            <div className="border-l border-[var(--stroke)] h-4" />
+            <ThemeToggle />
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center gap-6">
+            <ThemeToggle />
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-slate-200/80 hover:text-emerald-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-emerald-400"
+              className="text-secondary hover:text-primary transition-colors duration-400"
               aria-label={isOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={isOpen}
             >
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
+              {isOpen ? <X size={24} strokeWidth={1.5} /> : <Menu size={24} strokeWidth={1.5} />}
             </button>
           </div>
         </div>
@@ -194,24 +195,24 @@ const Navbar = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2 }}
-            className="md:hidden glass-effect border-t border-white/10 overflow-hidden"
+            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+            className="md:hidden refined-card border-t border-[var(--border-light)] overflow-hidden"
           >
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <div className="px-8 py-6 space-y-6">
               {navItems.map((item, index) => {
-                const isActive = activeSection === item.href.replace('#', '') || 
+                const isActive = activeSection === item.href.replace('#', '') ||
                                 (item.href === '#contact' && location.pathname === '/contact');
                 return (
                   <motion.button
                     key={item.label}
                     initial={{ x: -20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
-                    transition={{ delay: index * 0.05 }}
+                    transition={{ delay: index * 0.05, ease: [0.4, 0, 0.2, 1] }}
                     onClick={() => handleNavClick(item.href)}
-                    className={`w-full text-left px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                    className={`w-full text-left text-lg font-medium transition-colors duration-400 ${
                       isActive
-                        ? 'text-emerald-300 bg-emerald-500/10 border-l-2 border-emerald-500'
-                        : 'text-slate-200/80 hover:text-emerald-300 hover:bg-slate-800/50'
+                        ? 'text-primary'
+                        : 'text-secondary hover:text-primary'
                     }`}
                     aria-current={isActive ? 'page' : undefined}
                   >
@@ -221,36 +222,36 @@ const Navbar = () => {
               })}
 
               {/* Mobile Social Links */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-                className="flex items-center justify-center space-x-6 pt-4 pb-2 border-t border-white/10 mt-4"
+                transition={{ delay: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                className="flex items-center space-x-8 pt-6 border-t border-[var(--border-light)]"
               >
                 <a
                   href="https://github.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-slate-300 hover:text-emerald-300 transition-colors"
+                  className="text-secondary hover:text-[var(--accent)] transition-colors duration-400"
                   aria-label="Visit GitHub profile"
                 >
-                  <Github size={22} />
+                  <Github size={20} strokeWidth={1.5} />
                 </a>
                 <a
                   href="https://linkedin.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-slate-300 hover:text-emerald-300 transition-colors"
+                  className="text-secondary hover:text-[var(--accent)] transition-colors duration-400"
                   aria-label="Visit LinkedIn profile"
                 >
-                  <Linkedin size={22} />
+                  <Linkedin size={20} strokeWidth={1.5} />
                 </a>
                 <a
                   href="mailto:cheon@example.com"
-                  className="text-slate-300 hover:text-emerald-300 transition-colors"
+                  className="text-secondary hover:text-[var(--accent)] transition-colors duration-400"
                   aria-label="Send email"
                 >
-                  <Mail size={22} />
+                  <Mail size={20} strokeWidth={1.5} />
                 </a>
               </motion.div>
             </div>

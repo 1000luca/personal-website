@@ -1,0 +1,4 @@
+interface:
+  display_name: "Web Frontend"
+  short_description: "Implement responsive frontend with components and data"
+  default_prompt: "Use -frontend to build the UI in the chosen framework."
